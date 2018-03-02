@@ -3,7 +3,7 @@ import ELEMENT from 'element-ui'
 // import Vue from 'vue'
 
 var $ajax = axios.create({
-  baseURL: `http://localhost:8080/api`
+  baseURL: `http://119.28.157.233/api`
 })
 
 var NOOP = () => {}

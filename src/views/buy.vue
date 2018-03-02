@@ -331,6 +331,7 @@ export default {
         url: '/market/trades',
         done: ({data = []}) => {
           this.history = data
+          console.log(data)
         },
         always: () => {
           this.historyLoading = false
