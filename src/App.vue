@@ -22,6 +22,7 @@ export default {
 <style lang="less">
   @import "less/reset.less";
   @import "less/elementui-theme.less";
+  @import "less/base.less";
   #app{padding: 20px 30px;}
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {

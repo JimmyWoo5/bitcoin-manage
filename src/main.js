@@ -6,11 +6,13 @@ import router from './router'
 import Element from 'element-ui'
 import moment from 'moment'
 import echarts from 'echarts'
+import Vuebar from 'vuebar'
 import 'es6-promise-always'
 import $ajax from './ajax'
 
 Vue.use(Element)
 Vue.use($ajax)
+Vue.use(Vuebar)
 Vue.prototype.moment = moment
 Vue.prototype.$echarts = echarts
 

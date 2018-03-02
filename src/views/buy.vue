@@ -6,11 +6,15 @@
 
       <el-col :span='4'>
         <div class="title">成交历史</div>
-        <div class='bannerBox' style="height: 496px;" v-loading='historyLoading'>
-          <el-row v-for='(i, n) in history' :key='n'>
-            <el-col :span='13' :class="i.type=='sell'?'green':'red'">{{i.price}}</el-col>
-            <el-col :span='11' :class="i.amount>500?'red':''">{{i.amount}}</el-col>
-          </el-row>
+        <div v-bar="{observerThrottle: 1000}" style="height: 496px;" v-loading='historyLoading'>
+          <div class='bannerBox'>
+            <div class='wrapper'>
+              <el-row v-for='(i, n) in history' :key='n'>
+                <el-col :span='13' :class="i.type=='sell'?'green':'red'">{{i.price}}</el-col>
+                <el-col :span='11' :class="i.amount>500?'red':''">{{i.amount}}</el-col>
+              </el-row>
+            </div>
+          </div>
         </div>
       </el-col>
 
@@ -20,20 +24,28 @@
           <el-col :span='11'>卖</el-col>
           <el-col :span='13'>总量 {{soldAmount.toFixed(3)}}</el-col>
         </el-row>
-        <div ref='sellBannerBox' class='bannerBox' style='height: 228px;' v-loading='depthLoading'>
-          <el-row v-for='(i, n) in depth.asks' :key='n'>
-            <el-col :span='13'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
-            <el-col :span='11' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
-          </el-row>
+        <div v-bar style='height: 228px;' v-loading='depthLoading'>
+          <div ref='sellBannerBox' class='bannerBox' >
+            <div class='wrapper'>
+              <el-row v-for='(i, n) in depth.asks' :key='n'>
+                <el-col :span='12'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
+                <el-col :span='12' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
+              </el-row>
+            </div>
+          </div>
+
         </div>
 
         <div class='diff-price'>价差 <span class='red' style='cursor: pointer;' @click='onDiffPriceClick'>{{diffPrice}}</span></div>
-
-        <div class='bannerBox' style='height: 228px;' v-loading='depthLoading'>
-          <el-row v-for='(i, n) in depth.bids' :key='n'>
-            <el-col :span='13'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
-            <el-col :span='11' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
-          </el-row>
+        <div v-bar style='height: 228px;' v-loading='depthLoading'>
+          <div class='bannerBox'>
+            <div class="wrapper">
+              <el-row v-for='(i, n) in depth.bids' :key='n'>
+                <el-col :span='13'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
+                <el-col :span='11' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
+              </el-row>
+            </div>
+          </div>
         </div>
         <el-row class="title">
           <el-col :span='11'>买</el-col>
@@ -319,9 +331,9 @@ export default {
         url: '/market/trades',
         done: ({data = []}) => {
           this.history = data
-          this.historyLoading = false
         },
         always: () => {
+          this.historyLoading = false
           !this.destroyed && setTimeout(() => {
             this.getHistory()
           }, 1000)
@@ -340,7 +352,6 @@ export default {
       this.$ajax({
         url: '/market/depth',
         done: ({data = {}}) => {
-          this.depthLoading = false
           this.depth = data
           data.asks = data.asks || [] // 卖
           data.bids = data.bids || [] // 买
@@ -353,6 +364,7 @@ export default {
           this.sellScrollInit()
         },
         always: () => {
+          this.depthLoading = false
           !this.destroyed && setTimeout(() => {
             this.getDepth()
           }, 1000)
@@ -542,7 +554,10 @@ export default {
     .red{color:@red};
     .green{color:@green};
 
-    .bannerBox{border:1px solid #a1a1a1;padding: 10px 4px;box-sizing: border-box;overflow:auto;overflow-x: hidden;text-align: right;}
+    .bannerBox{
+      box-sizing: border-box;text-align: right;
+      .wrapper{margin-right:20px;}
+    }
 
     h2{font-size: 20px;line-height: 20px;height: 30px;}
 
@@ -558,5 +573,7 @@ export default {
     .outPrice .el-input__inner{background: @green;text-align: right;}
 
     .form-btn{margin-top: 20px;}
+
+    .vb{border:1px solid #A1A1A1}
   }
 </style>
