@@ -1,18 +1,18 @@
 <template>
-  <div class="history">
+  <div id="history">
     <h1>历史数据</h1>
     <el-row>
       <el-col :span='11'>
 
         <h2>未成交</h2>
         <el-table :data="undone" v-loading='undoneLoading'>
-          <el-table-column prop="time" label="时间" min-width='180'></el-table-column>
-          <el-table-column prop="price" label="价格" min-width='130'></el-table-column>
+          <el-table-column prop="time" label="时间" min-width='175'></el-table-column>
+          <el-table-column prop="price" label="价格" min-width='125'></el-table-column>
           <el-table-column prop="amount" label="数量"></el-table-column>
-          <el-table-column prop="deal_amount" label="成交量"></el-table-column>
-          <el-table-column label='操作' width='80'>
+          <el-table-column prop="deal_amount" label="成交量" min-width='115'></el-table-column>
+          <el-table-column label='操作' min-width='65'>
             <template slot-scope="scope">
-              <el-button size='small' @click='revoke(scope.row)'>撤单</el-button>
+              <el-button type='text' @click='revoke(scope.row)'>撤单</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -41,10 +41,10 @@
           </el-col>-->
         </el-row>
         <el-table :data="done" v-loading='doneLoading'>
-          <el-table-column prop="time" label="时间" min-width='180'></el-table-column>
-          <el-table-column prop="price" label="价格" min-width='130'></el-table-column>
+          <el-table-column prop="time" label="时间" min-width='175'></el-table-column>
+          <el-table-column prop="price" label="价格" min-width='125'></el-table-column>
           <el-table-column prop="amount" label="数量"></el-table-column>
-          <el-table-column prop="deal_amount" label="成交量"></el-table-column>
+          <el-table-column prop="deal_amount" label="成交量" min-width='115'></el-table-column>
         </el-table>
 
         <el-pagination
@@ -59,7 +59,10 @@
       </el-col>
 
     </el-row>
-    <el-button type='text' class='link' @click="$router.push('/')">返回</el-button>
+    <div class='link'>
+      <el-button type='text' @click="$router.push('/')">返回首页</el-button>
+      <el-button type='text' @click="$router.push('/chart')">查看图表</el-button>
+    </div>
   </div>
 </template>
 
@@ -97,6 +100,7 @@ export default {
           this.total1 = data.total
         },
         always: () => {
+        //        this.undone = [{time: '2017-03-03 33:22:33', price: 0.999999999, amount: 2323, deal_amount: 0.99999999}]
           this.undoneLoading = false
         }
       })
@@ -107,9 +111,9 @@ export default {
         url: '/trade/order/list',
         params: {
           page: this.currentPage2,
-          status: 1,
-          start_date: this.moment(this.startDate || Date.now()).format('YYYYMMDD'),
-          end_date: this.moment(this.endDate || Date.now()).format('YYYYMMDD')
+          status: 1
+          //        start_date: this.moment(this.startDate || Date.now()).format('YYYYMMDD'),
+          //        end_date: this.moment(this.endDate || Date.now()).format('YYYYMMDD')
         },
         done: ({data = {}}) => {
           this.done = data.orders || []
@@ -119,6 +123,7 @@ export default {
           this.total2 = data.total
         },
         always: () => {
+          //        this.done = [{time: '2017-03-03 33:22:33', price: 0.999999999, amount: 2323, deal_amount: 0.99999999}]
           this.doneLoading = false
         }
       })
@@ -175,7 +180,7 @@ export default {
 </script>
 
 <style lang="less">
-  .history{
+  #history{
     position: relative;padding: 10px;
     h1{font-size: 42px;line-height: 42px;margin-bottom:30px;}
     h2{font-size: 30px;line-height: 30px;height: 46px;}

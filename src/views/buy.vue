@@ -1,5 +1,5 @@
 <template>
-  <div class='buy'>
+  <div id='buy'>
     <el-row>
 
 <!------------------------------------成交历史---------------------------------->
@@ -206,7 +206,7 @@ export default {
       callback()
     }
     var valiDiffPrice = (rule, value, callback) => {
-      if (value >= this.diffPrice) {
+      if (this.diffPrice && value >= this.diffPrice) {
         callback(new Error('必须小于价差'))
       }
       callback()
@@ -214,11 +214,11 @@ export default {
     return {
       focusedParam: '', // 聚焦 的输入框model名
 
-      history: [],
-      depth: {},
-      diffPrice: '',
-      boughtAmount: 0,
-      soldAmount: 0,
+      history: [], // 历史记录
+      depth: {}, // 深度
+      diffPrice: '', // 买卖差价
+      boughtAmount: 0, // 买总量
+      soldAmount: 0, // 卖总量
       historyLoading: true, // 成交历史loading
       depthLoading: true, // 买卖loading
 
@@ -491,6 +491,7 @@ export default {
       return this.sort(buy).concat(this.sort(sell))
     },
     autoFill () {
+      console.log(this.diffForm2)
       this.$refs.diffForm2.validate(valid => {
         if (valid) {
           this.autoFillLoading = true
@@ -537,12 +538,12 @@ export default {
 
 <style lang="less">
   @import '~@/less/varibles.less';
-  .buy{
+  #buy{
     position:relative;
     .red{color:@red};
     .green{color:@green};
 
-    .bannerBox{border:1px solid #a1a1a1;padding: 10px 4px;box-sizing: border-box;overflow-y:scroll;overflow-x: hidden;text-align: right;}
+    .bannerBox{border:1px solid #a1a1a1;padding: 10px 4px;box-sizing: border-box;overflow:auto;overflow-x: hidden;text-align: right;}
 
     h2{font-size: 20px;line-height: 20px;height: 30px;}
 

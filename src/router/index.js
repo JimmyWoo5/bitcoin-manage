@@ -19,6 +19,13 @@ export default new Router({
       meta: {
         requiresAuth: true
       }
+    }, {
+      path: '/chart',
+      name: 'chart',
+      component: resolve => require(['@/views/chart'], resolve),
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
