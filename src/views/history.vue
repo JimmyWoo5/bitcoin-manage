@@ -59,10 +59,6 @@
       </el-col>
 
     </el-row>
-    <div class='link'>
-      <el-button type='text' @click="$router.push('/')">返回首页</el-button>
-      <el-button type='text' @click="$router.push('/chart')">查看图表</el-button>
-    </div>
   </div>
 </template>
 
@@ -184,7 +180,5 @@ export default {
     position: relative;padding: 10px;
     h1{font-size: 42px;line-height: 42px;margin-bottom:30px;}
     h2{font-size: 30px;line-height: 30px;height: 46px;}
-
-    .link{position: absolute;right: 10px;top:0;}
   }
 </style>

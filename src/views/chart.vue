@@ -1,11 +1,6 @@
 <template>
   <div id='chart'>
-
-    <div id='main' style='height:500px'></div>
-    <div style="text-align: center;">
-      <el-button type='text' @click="$router.push('/history')">查看历史记录</el-button>
-      <el-button type='text' @click="$router.push('/')">返回首页</el-button>
-    </div>
+    <div ref='chart' style='height:500px;margin-top: 40px;'></div>
   </div>
 </template>
 
@@ -105,7 +100,7 @@ export default {
     this.option.series[1].data = data.data.ma10.map(i => { return i.money })
     this.option.series[2].data = data.data.ma60.map(i => { return i.money })
     this.option.xAxis.data = data.data.time.map(i => { return this.moment(i).format('YYYY-MM-DD HH:mm') })
-    var charts = this.$echarts.init(document.getElementById('main'))
+    var charts = this.$echarts.init(this.$refs.chart)
     charts.setOption(this.option)
   }
 }

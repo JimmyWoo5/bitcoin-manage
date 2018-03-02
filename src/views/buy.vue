@@ -158,7 +158,6 @@
       </el-col>
 
     </el-row>
-    <el-button type='text' class='link' @click="$router.push('/history')">查看历史数据</el-button>
 
     <!----------------下单-------------------->
     <el-dialog :title='orderDialogTitle' :visible.sync="orderDialogVisible" size='tiny' @close='isInDanger=false'>
@@ -559,7 +558,5 @@ export default {
     .outPrice .el-input__inner{background: @green;text-align: right;}
 
     .form-btn{margin-top: 20px;}
-
-    .link{position: absolute;right: 0;top:0;}
   }
 </style>
