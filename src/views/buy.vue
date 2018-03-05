@@ -21,8 +21,8 @@
       <el-col :span='4' :offset='1'>
 
         <el-row class="title">
-          <el-col :span='11'>卖</el-col>
-          <el-col :span='13'>总量 {{soldAmount.toFixed(3)}}</el-col>
+          <el-col :span='10'>卖</el-col>
+          <el-col :span='14'>总量 {{soldAmount.toFixed(3)}}</el-col>
         </el-row>
         <div v-bar style='height: 228px;' v-loading='depthLoading'>
           <div ref='sellBannerBox' class='bannerBox' >
@@ -48,8 +48,8 @@
           </div>
         </div>
         <el-row class="title">
-          <el-col :span='11'>买</el-col>
-          <el-col :span='13'>总量 {{boughtAmount.toFixed(3)}}</el-col>
+          <el-col :span='10'>买</el-col>
+          <el-col :span='14'>总量 {{boughtAmount.toFixed(3)}}</el-col>
         </el-row>
 
       </el-col>

@@ -13,7 +13,7 @@ module.exports = {
     proxyTable: {
       '/api': {
 //      target: 'http://192.168.31.113:9090', // peak
-        target: 'https://119.28.157.233', // 线上
+        target: 'http://119.28.157.233',
 //      pathRewrite: {
 //        '^/api': ''
 //      },
@@ -83,10 +83,7 @@ module.exports = {
     bundleAnalyzerReport: process.env.npm_config_report,
     proxyTable: {
       '/api': {
-        target: 'https://119.28.157.233',
-        // pathRewrite: {
-        //   '^/api': ''
-        // },
+        target: 'http://119.28.157.233',
         changeOrigin: true
       }
     }
