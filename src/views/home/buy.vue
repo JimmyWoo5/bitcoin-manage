@@ -1,39 +1,71 @@
 <template>
   <div id='buy'>
-    <el-row>
+    <el-form inline class='filter-form'>
+      <el-form-item label='平台'>
+        <el-select v-model="platformId" placeholder="请选择" @change='onPlatformChange'>
+          <el-option v-for="(i, n) in platformList" :key="n" :label="i.name" :value="i.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label='交易区'>
+        <el-select v-model="areaId" placeholder="请选择" @change='onAreaChange'>
+          <el-option v-for="(i, n) in areaList" :key="n" :label="i.name" :value="i.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label='币名'>
+        <el-select v-model="currencyId" placeholder="请选择" @change='onCurrencyChange'>
+          <el-option v-for="(i, n) in currencyList" :key="n" :label="i.name" :value="i.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <!--<el-form-item label='账户余额'>
+        -
+      </el-form-item>-->
+    </el-form>
 
 <!------------------------------------成交历史---------------------------------->
 
-      <el-col :span='4'>
+    <el-row :gutter='20'>
+
+      <el-col :span='6'>
         <div class="title">成交历史</div>
-        <div v-bar="{observerThrottle: 1000}" style="height: 496px;" v-loading='historyLoading'>
+        <el-row>
+          <el-col :span='12'>时间</el-col>
+          <el-col :span='6'>价格</el-col>
+          <el-col :span='6'>数量</el-col>
+        </el-row>
+        <div v-bar="{observerThrottle: 1000}" style="height: 498px;" v-loading='historyLoading'>
           <div class='bannerBox'>
             <div class='wrapper'>
               <el-row v-for='(i, n) in history' :key='n'>
-                <el-col :span='13' :class="i.type=='sell'?'green':'red'">{{i.price}}</el-col>
-                <el-col :span='11' :class="i.amount>500?'red':''">{{i.amount}}</el-col>
+                <el-col :span='10' class='text-left'>{{i.time}}</el-col>
+                <el-col :span='7' :class="i.type=='sell'?'green':'red'">{{i.price}}</el-col>
+                <el-col :span='7' :class="i.amount>500?'red':''">{{i.amount}}</el-col>
               </el-row>
             </div>
           </div>
         </div>
       </el-col>
 
-      <el-col :span='4' :offset='1'>
+      <el-col :span='6'>
 
         <el-row class="title">
           <el-col :span='10'>卖</el-col>
           <el-col :span='14'>总量 {{soldAmount.toFixed(3)}}</el-col>
         </el-row>
+        <el-row>
+          <el-col :span='10'>价格</el-col>
+          <el-col :span='8'>数量</el-col>
+          <el-col :span='6'>总额</el-col>
+        </el-row>
         <div v-bar style='height: 228px;' v-loading='depthLoading'>
           <div ref='sellBannerBox' class='bannerBox' >
             <div class='wrapper'>
               <el-row v-for='(i, n) in depth.asks' :key='n'>
-                <el-col :span='12'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
-                <el-col :span='12' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
+                <el-col :span='8'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
+                <el-col :span='8' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
+                <el-col :span='8'>{{(i[0]*i[1]).toFixed(9)}}</el-col>
               </el-row>
             </div>
           </div>
-
         </div>
 
         <div class='diff-price'>价差 <span class='red' style='cursor: pointer;' @click='onDiffPriceClick'>{{diffPrice}}</span></div>
@@ -41,8 +73,9 @@
           <div class='bannerBox'>
             <div class="wrapper">
               <el-row v-for='(i, n) in depth.bids' :key='n'>
-                <el-col :span='13'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
-                <el-col :span='11' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
+                <el-col :span='8'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
+                <el-col :span='8' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
+                <el-col :span='8'>{{(i[0]*i[1]).toFixed(9)}}</el-col>
               </el-row>
             </div>
           </div>
@@ -56,7 +89,7 @@
 
 <!------------------------------------打散下单---------------------------------->
 
-      <el-col :span='5' :offset='1' style='margin-top: 30px;'>
+      <el-col :span='4' style='margin-top: 30px;'>
         <h2>打散下单</h2>
         <el-form :model="scatterForm" :rules='scatterRules' ref="scatterForm" label-width="80px">
           <el-form-item label="中心价格" prop='price'>
@@ -75,8 +108,8 @@
             <el-input type='number' v-model.number="scatterForm.total"></el-input>
           </el-form-item>
           <div class='form-btn'>
-            <el-button class='large-btn' :loading='buyBtnLoading' @click="onBuyClick">买</el-button>
-            <el-button class='large-btn' :loading='sellBtnLoading' @click="onSellClick">卖</el-button>
+            <el-button class='medium-btn' :loading='buyBtnLoading' @click="onBuyClick">买</el-button>
+            <el-button class='medium-btn' :loading='sellBtnLoading' @click="onSellClick">卖</el-button>
           </div>
         </el-form>
 
@@ -85,20 +118,20 @@
         <h2 style="margin-top: 34px;">填补流动性</h2>
         <el-form :model="mobilityForm" :rules='mobilityRules' ref="mobilityForm" label-width="80px">
 
-          <el-form-item label="档位" required>
-            <el-row>
-              <el-col :span='10'>
-                <el-form-item prop='levelFrom'>
-                  <el-input type='number' v-model.number="mobilityForm.levelFrom"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span='4' style='text-align: center;'>至</el-col>
-              <el-col :span='10'>
-                <el-form-item prop='levelTo'>
-                  <el-input type='number' v-model.number="mobilityForm.levelTo"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
+          <el-form-item label="档位" style='margin:0'>
+          <el-row>
+            <el-col :span='10'>
+              <el-form-item prop='levelFrom'>
+                <el-input type='number' v-model.number="mobilityForm.levelFrom"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span='4' style='text-align: center;'>至</el-col>
+            <el-col :span='10'>
+              <el-form-item prop='levelTo'>
+                <el-input type='number' v-model.number="mobilityForm.levelTo"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
           </el-form-item>
 
           <el-form-item label="填补档数" prop='fillLevel'>
@@ -119,61 +152,65 @@
 
 <!------------------------------------填补差价---------------------------------->
 
-      <el-col :span='8' :offset='1' style='margin-top: 30px;'>
+      <el-col :span='8' style='margin-top: 30px;'>
         <h2>填补差价</h2>
+        <el-row>
 
-          <el-row>
+          <el-col :span='15'>
+            <el-form :model="diffForm" ref="diffForm" label-width="50px">
+              <el-row v-for='(i,n) in diffForm.list' :key='n'>
+                <el-col :span='15'>
+                  <el-form-item
+                    :label='priceLabels[n]'
+                    >
+                    <!--:prop= "'list.' + n + '.price'"
+                    :rules="[{required: true, message: '请输入价格'}]"-->
+                    <el-input :class="i.type=='buy'?'inPrice':'outPrice'" type='number' v-model.number='diffForm.list[n].price'></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span='8' :offset='1'>
+                  <el-form-item
+                    label-width="0"
+                    >
+                    <!--:prop= "'list.' + n + '.num'"
+                    :rules="[{required: true, message: '请输入数量'}]"-->
+                    <el-input type='number' v-model.number='diffForm.list[n].num'></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+          </el-col>
 
-            <el-col :span='15'>
-              <el-form :model="diffForm" ref="diffForm" label-width="50px">
-                <el-row v-for='(i,n) in diffForm.list' :key='n'>
-                  <el-col :span='15'>
-                    <el-form-item
-                      :label='priceLabels[n]'
-                      >
-                      <!--:prop= "'list.' + n + '.price'"
-                      :rules="[{required: true, message: '请输入价格'}]"-->
-                      <el-input :class="i.type=='buy'?'inPrice':'outPrice'" type='number' v-model.number='diffForm.list[n].price'></el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span='8' :offset='1'>
-                    <el-form-item
-                      label-width="0"
-                      >
-                      <!--:prop= "'list.' + n + '.num'"
-                      :rules="[{required: true, message: '请输入数量'}]"-->
-                      <el-input type='number' v-model.number='diffForm.list[n].num'></el-input>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </el-form>
-            </el-col>
+          <el-col :span='9' style='margin-top: 140px;'>
+            <el-form :model="diffForm2" :rules='diffRules2' ref="diffForm2" label-width="50px">
+              <el-form-item label="差价" prop='price'>
+                <el-input ref='diffPrice' type='number' v-model.number="diffForm2.price"></el-input>
+              </el-form-item>
+              <el-form-item label="总量" prop='total' :rules="[{required: true, message: '请输入总量'}]">
+                <el-input type='number' v-model.number="diffForm2.total"></el-input>
+              </el-form-item>
+            </el-form>
+          </el-col>
 
-            <el-col :span='9' style='margin-top: 140px;'>
-              <el-form :model="diffForm2" :rules='diffRules2' ref="diffForm2" label-width="50px">
-                <el-form-item label="差价" prop='price'>
-                  <el-input ref='diffPrice' type='number' v-model.number="diffForm2.price"></el-input>
-                </el-form-item>
-                <el-form-item label="总量" prop='total' :rules="[{required: true, message: '请输入总量'}]">
-                  <el-input type='number' v-model.number="diffForm2.total"></el-input>
-                </el-form-item>
-              </el-form>
-            </el-col>
+        </el-row>
 
-          </el-row>
-
-          <div class='form-btn'>
-            <el-button class='medium-btn' :loading='autoFillLoading' @click="autoFill">自动填充</el-button>
-            <el-button class='large-btn' @click="onDiffClick">下单</el-button>
-          </div>
+        <div class='form-btn'>
+          <el-button :loading='autoFillLoading' @click="autoFill">自动填充</el-button>
+          <el-button class='large-btn' @click="onDiffClick">下单</el-button>
+        </div>
 
       </el-col>
 
     </el-row>
 
     <!----------------下单-------------------->
-    <el-dialog :title='orderDialogTitle' :visible.sync="orderDialogVisible" size='tiny' @close='isInDanger=false'>
-      <el-table :data="orderData">
+    <el-dialog center :title='orderDialogTitle' :visible.sync="orderDialogVisible" @close='isInDanger=false'>
+      <el-table border :data="orderData">
+        <el-table-column label="类型">
+          <template slot-scope='scope'>
+            {{scope.row.type == 'buy' ? '买' : '卖'}}
+          </template>
+        </el-table-column>
         <el-table-column prop="price" label="价格"></el-table-column>
         <el-table-column prop="num" label="数量"></el-table-column>
       </el-table>
@@ -185,8 +222,8 @@
     </el-dialog>
 
     <!--------------------下单结果------------------>
-    <el-dialog title='下单结果' :visible.sync="resultDialogVisible">
-      <el-table :data="resultData">
+    <el-dialog center title='下单结果' :visible.sync="resultDialogVisible">
+      <el-table border :data="resultData">
         <el-table-column label="类型">
           <template slot-scope='scope'>
             {{scope.row.type == 'buy' ? '买' : '卖'}}
@@ -223,6 +260,16 @@ export default {
       callback()
     }
     return {
+
+      platformId: '', // 筛选
+      areaId: '', // 交易区
+      currencyId: '', // 币种
+      platformList: [],
+      areaList: [],
+      currencyList: [],
+      allAreas: {}, // 所有交易区缓存
+      allCurrencys: {}, // 所有币名缓存
+
       focusedParam: '', // 聚焦 的输入框model名
 
       history: [], // 历史记录
@@ -230,8 +277,8 @@ export default {
       diffPrice: '', // 买卖差价
       boughtAmount: 0, // 买总量
       soldAmount: 0, // 卖总量
-      historyLoading: true, // 成交历史loading
-      depthLoading: true, // 买卖loading
+      historyLoading: true, // 成交历史loading ---------------------------------------------
+      depthLoading: true, // 买卖loading------------------------------------------
 
       orderDialogVisible: false, // 订单确认弹框
       orderDialogTitle: '', // 弹框title
@@ -272,11 +319,11 @@ export default {
       },
       mobilityRules: {
         levelFrom: [
-          {required: true, message: '请输入档位'},
+          {required: true, message: '输入档位'},
           {validator: valiLevel}
         ],
         levelTo: [
-          {required: true, message: '请输入档位'},
+          {required: true, message: '输入档位'},
           {validator: valiLevel}
         ],
         fillLevel: [
@@ -292,17 +339,17 @@ export default {
       autoFillLoading: false, // 自动填充loading
       diffForm: {
         list: [
-          {price: '', num: '', type: 'buy'},
-          {price: '', num: '', type: 'buy'},
-          {price: '', num: '', type: 'buy'},
-          {price: '', num: '', type: 'buy'},
           {price: '', num: '', type: 'sell'},
           {price: '', num: '', type: 'sell'},
           {price: '', num: '', type: 'sell'},
-          {price: '', num: '', type: 'sell'}
+          {price: '', num: '', type: 'sell'},
+          {price: '', num: '', type: 'buy'},
+          {price: '', num: '', type: 'buy'},
+          {price: '', num: '', type: 'buy'},
+          {price: '', num: '', type: 'buy'}
         ]
       },
-      priceLabels: ['买4价', '买3价', '买2价', '买1价', '卖1价', '卖2价', '卖3价', '卖4价'],
+      priceLabels: ['卖4价', '卖3价', '卖1价', '卖1价', '买1价', '买2价', '买3价', '买4价'],
       diffForm2: {
         price: '',
         total: ''
@@ -316,9 +363,81 @@ export default {
     }
   },
   methods: {
+    getPlatform () { // 获取平台
+      this.$ajax({
+        url: '/option/platform',
+        done: ({data}) => {
+          data = data || []
+          this.platformList = data
+          this.platformId = data.length ? data[0].id : ''
+          this.onPlatformChange()
+        }
+      })
+    },
+    onPlatformChange () { // 切换平台
+      this.getArea()
+    },
+    onAreaChange () { // 切换交易区
+      this.areaList.forEach(i => {
+        if (i.id === this.areaId) {
+          this.areaName = i.name
+        }
+      })
+      this.getCurrency()
+    },
+    onCurrencyChange () { // 切换币名
+      this.currencyList.forEach(i => {
+        if (i.id === this.currencyId) {
+          this.currencyName = i.name
+        }
+      })
+      var xParams = [this.platformId, this.areaName, this.currencyName].join(',')
+      this.$store.commit('updateXparams', xParams)
+      localStorage.setItem('xParams', xParams)
+      this.getHistory()
+      this.getDepth()
+    },
+    getArea () { // 获取交易区
+      this.$ajax({
+        url: '/option/symbol',
+        params: {
+          plat_id: this.platformId
+        },
+        done: ({data}) => {
+          data = data || []
+          this.areaList = data
+          this.areaId = data.length ? data[0].id : ''
+          if (data.length) {
+            this.areaId = data[0].id
+          } else {
+            this.areaId = ''
+            this.areaName = ''
+          }
+          this.onAreaChange()
+        }
+      })
+    },
+    getCurrency () { // 获取币种
+      this.$ajax({
+        url: '/option/coin',
+        params: {
+          symbol_id: this.areaId
+        },
+        done: ({data}) => {
+          data = data || []
+          this.currencyList = data
+          if (data.length) {
+            this.currencyId = data[0].id
+          } else {
+            this.currencyId = ''
+            this.currencyName = ''
+          }
+          this.onCurrencyChange()
+        }
+      })
+    },
     onPriceClick (price) {
       if (this.focusedParam) {
-        console.log(this.focusedParam, price)
         this.scatterForm[this.focusedParam] = price
       }
     },
@@ -329,9 +448,10 @@ export default {
     getHistory () {
       this.$ajax({
         url: '/market/trades',
-        done: ({data = []}) => {
-          this.history = data
-          console.log(data)
+        done: ({data}) => {
+          data = data || []
+          data.forEach(i => { i.time = this.moment(i.date_ms).format('YY.MM.DD HH:mm:ss') })
+          this.history = data.reverse()
         },
         always: () => {
           this.historyLoading = false
@@ -352,7 +472,8 @@ export default {
     getDepth () {
       this.$ajax({
         url: '/market/depth',
-        done: ({data = {}}) => {
+        done: ({data}) => {
+          data = data || {}
           this.depth = data
           data.asks = data.asks || [] // 卖
           data.bids = data.bids || [] // 买
@@ -442,7 +563,7 @@ export default {
         data: {
           orders: this.orderData
         },
-        done: ({data = {}}) => {
+        done: ({data}) => {
           this.orderDialogVisible = false
           this.solveResultData(data)
         },
@@ -451,7 +572,7 @@ export default {
         }
       })
     },
-    solveResultData (data) {
+    solveResultData (data = {}) {
       this.resultDialogVisible = true
       data.false.forEach(i => { i.status = 0 })
       data.true.forEach(i => { i.status = 1 })
@@ -470,11 +591,11 @@ export default {
               stall_num: this.mobilityForm.fillLevel,
               amount: this.mobilityForm.total
             },
-            done: (res) => {
+            done: ({data}) => {
+              data = data || []
               this.orderDialogTitle = '填补流动性'
-              res.data = res.data || []
-              res.data.forEach(i => { i.type = 'buy' })
-              this.orderData = res.data // 弹框每次展现，orderData都是重新获取的数据
+              data.forEach(i => { i.type = 'buy' })
+              this.orderData = data // 弹框每次展现，orderData都是重新获取的数据
               this.orderType = 0
               this.orderDialogVisible = true // 下单按钮能点，必须在计算成功后
             },
@@ -497,10 +618,10 @@ export default {
       }
       return arr
     },
-    solveAutoFillData (data) {
+    solveAutoFillData (data = []) {
       var sell = data.slice(0, 4)
       var buy = data.slice(4)
-      return this.sort(buy).concat(this.sort(sell))
+      return this.sort(sell).concat(this.sort(buy))
     },
     autoFill () {
       console.log(this.diffForm2)
@@ -514,7 +635,7 @@ export default {
               price_diff: this.diffForm2.price,
               amount: this.diffForm2.total
             },
-            done: ({data = []}) => {
+            done: ({data}) => {
               this.diffForm.list = this.solveAutoFillData(data)
             },
             always: () => {
@@ -539,8 +660,9 @@ export default {
     }
   },
   mounted () {
-    this.getHistory()
-    this.getDepth()
+    this.getPlatform()
+    //  this.getHistory()
+    //  this.getDepth()
   },
   beforeDestroy () {
     this.destroyed = true // 防止异步请求触触发多个延时器，无法控制
@@ -549,11 +671,13 @@ export default {
 </script>
 
 <style lang="less">
-  @import '~@/less/varibles.less';
+  @import '~@/less/varibles';
   #buy{
-    position:relative;
-    .red{color:@red};
-    .green{color:@green};
+
+     /*表单*/
+    .el-form-item{margin-bottom: 10px;}
+    .el-input__inner{height: 30px;}
+    .el-form-item__error{top:87%}
 
     .bannerBox{
       box-sizing: border-box;text-align: right;
@@ -564,7 +688,8 @@ export default {
 
     .title{line-height: 30px;}
 
-    .large-btn{width: 124px;padding-left: 0;padding-right: 0;text-align: center;}
+    .large-btn{width: 124px;}
+    .medium-btn{width: 88px}
 
     .diff-price{
       text-align: center;line-height:40px;
@@ -576,5 +701,13 @@ export default {
     .form-btn{margin-top: 20px;}
 
     .vb{border:1px solid #A1A1A1}
+
+    /*顶部筛选*/
+    .filter-form{
+      .el-select{width:100px;}
+      .el-form-item__content{line-height: 24px;}
+      .el-form-item__label{padding: 0 12px 0 0;line-height: 1;}
+      .el-input__inner{height: 24px;}
+    }
   }
 </style>

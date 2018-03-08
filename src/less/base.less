@@ -1,3 +1,10 @@
+@import "varibles";
+
+// 文字对齐
+.text-left{text-align: left;}
+.text-center{text-align: center;}
+.text-right{text-align: right;}
+
 // 滚动条
 
 .vb > .vb-dragger {
@@ -45,3 +52,17 @@
 .vb.vb-dragging-phantom > .vb-dragger > .vb-dragger-styler {
   background-color: rgba(0, 0, 0,.5);
 }
+
+// 隐藏数字按钮
+input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  input[type="number"]{
+    -moz-appearance: textfield;
+  }
+
+// 主要颜色
+@import "varibles";
+.red{color:@red};
+.green{color:@green};

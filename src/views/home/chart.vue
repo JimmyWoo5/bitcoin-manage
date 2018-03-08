@@ -1,12 +1,11 @@
 <template>
   <div id='chart'>
-    <div ref='chart' style='height:500px;margin-top: 40px;'></div>
+    <div class='chart' ref='chart'></div>
   </div>
 </template>
 
 <script>
 import data from '@/json/chart'
-console.log(data)
 
 // 使用刚指定的配置项和数据显示图表。
 
@@ -14,7 +13,7 @@ export default {
   data () {
     return {
       option: {
-        backgroundColor: '#2c343c',
+        backgroundColor: '#000',
         textStyle: {
           color: '#fff'
         },
@@ -96,6 +95,7 @@ export default {
     }
   },
   mounted () {
+    this.$refs.chart.style.height = document.documentElement.clientHeight - 60 + 'px' // 充满可见区域高度
     this.option.series[0].data = data.data.ma5.map(i => { return i.money })
     this.option.series[1].data = data.data.ma10.map(i => { return i.money })
     this.option.series[2].data = data.data.ma60.map(i => { return i.money })
@@ -107,4 +107,5 @@ export default {
 </script>
 
 <style lang='less'>
+  .chart{position: absolute;width: 100%;left:0;top:60px}
 </style>

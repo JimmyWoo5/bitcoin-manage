@@ -1,19 +1,29 @@
 import axios from 'axios'
 import ELEMENT from 'element-ui'
-// import Vue from 'vue'
+import store from '@/store'
+import router from '@/router'
 
-var $ajax = axios.create({
-  baseURL: `/api`
+axios.defaults.baseURL = '/api'
+
+axios.interceptors.request.use(config => {
+  config.headers['token'] = store.state.token
+  if (store.state.xParams) config.headers['x-params'] = store.state.xParams
+  return config
+}, error => {
+  return Promise.reject(error)
 })
 
 var NOOP = () => {}
-var http = (opts) => {
+var $ajax = (opts) => {
   opts.done = opts.done || NOOP
   opts.fail = opts.fail || NOOP
   opts.always = opts.always || NOOP
-  $ajax(opts).then(({data}) => {
+  axios(opts).then(({data}) => {
     if (data.status === 200 || data.status === 403) {
       opts.done(data)
+    } else if (data.status === 10001) {
+      ELEMENT.Message.error('登录过期')
+      router.push('/login')
     } else {
       ELEMENT.Message.error(data.message)
       opts.fail(data)
@@ -29,7 +39,7 @@ var http = (opts) => {
 export default {
   name: 'ajax',
   install (Vue) {
-    Vue.ajax = http
-    Vue.prototype.$ajax = http
+    Vue.ajax = $ajax
+    Vue.prototype.$ajax = $ajax
   }
 }

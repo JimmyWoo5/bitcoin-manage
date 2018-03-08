@@ -5,12 +5,18 @@
       <el-col :span='11'>
 
         <h2>未成交</h2>
-        <el-table :data="undone" v-loading='undoneLoading'>
+        <el-table border :data="undone" v-loading='undoneLoading'>
+          <el-table-column label="类型" min-width='66'>
+            <template slot-scope='scope'>
+              <span class='red' v-if="scope.row.type==='sell'">买</span>
+              <span class='green' v-else>卖</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="time" label="时间" min-width='175'></el-table-column>
           <el-table-column prop="price" label="价格" min-width='125'></el-table-column>
-          <el-table-column prop="amount" label="数量"></el-table-column>
+          <el-table-column prop="amount" label="数量" min-width='125'></el-table-column>
           <el-table-column prop="deal_amount" label="成交量" min-width='115'></el-table-column>
-          <el-table-column label='操作' min-width='65'>
+          <el-table-column label='操作' min-width='65' fixed='right'>
             <template slot-scope="scope">
               <el-button type='text' @click='revoke(scope.row)'>撤单</el-button>
             </template>
@@ -40,10 +46,16 @@
             <el-button @click='getDone'>search</el-button>
           </el-col>-->
         </el-row>
-        <el-table :data="done" v-loading='doneLoading'>
+        <el-table border :data="done" v-loading='doneLoading'>
+          <el-table-column label="类型" min-width='66'>
+            <template slot-scope='scope'>
+              <span class='red' v-if="scope.row.type==='sell'">买</span>
+              <span class='green' v-else>卖</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="time" label="时间" min-width='175'></el-table-column>
           <el-table-column prop="price" label="价格" min-width='125'></el-table-column>
-          <el-table-column prop="amount" label="数量"></el-table-column>
+          <el-table-column prop="amount" label="数量" min-width='125'></el-table-column>
           <el-table-column prop="deal_amount" label="成交量" min-width='115'></el-table-column>
         </el-table>
 
@@ -177,7 +189,6 @@ export default {
 
 <style lang="less">
   #history{
-    position: relative;padding: 10px;
     h1{font-size: 42px;line-height: 42px;margin-bottom:30px;}
     h2{font-size: 30px;line-height: 30px;height: 46px;}
   }
