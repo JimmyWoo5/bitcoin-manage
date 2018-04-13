@@ -12,12 +12,12 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://192.168.31.113:9090', // peak
+//      target: 'http://192.168.31.113:9090', // peak
 //      target: 'http://192.168.31.162:9090', // Marico
-//      target: 'http://119.28.157.233',
-        pathRewrite: {
-          '^/api': ''
-        },
+        target: 'http://119.28.157.233',
+//      pathRewrite: {
+//        '^/api': ''
+//      },
         changeOrigin: true
       }
     },

@@ -8,10 +8,10 @@ export default new Vuex.Store({
   },
   mutations: {
     updateToken (state, payload) {
-      state.token = payload
+      state.token = payload || ''
     },
     updateXparams (state, payload) {
-      state.xParams = payload
+      state.xParams = payload || ''
     }
   },
   actions: {

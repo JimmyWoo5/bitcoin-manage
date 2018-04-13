@@ -16,9 +16,9 @@
           <el-option v-for="(i, n) in currencyList" :key="n" :label="i.name" :value="i.id"></el-option>
         </el-select>
       </el-form-item>
-      <!--<el-form-item label='账户余额'>
-        -
-      </el-form-item>-->
+      <el-form-item label='账户余额'>
+        <span style='margin-right: 10px;' v-for='(i,n) in restMoney' :key='n'>{{i.name}}: {{i.value || '-'}}</span>
+      </el-form-item>
     </el-form>
 
 <!------------------------------------成交历史---------------------------------->
@@ -37,8 +37,8 @@
             <div class='wrapper'>
               <el-row v-for='(i, n) in history' :key='n'>
                 <el-col :span='10' class='text-left'>{{i.time}}</el-col>
-                <el-col :span='7' :class="i.type=='sell'?'green':'red'">{{i.price}}</el-col>
-                <el-col :span='7' :class="i.amount>500?'red':''">{{i.amount}}</el-col>
+                <el-col :span='8' :class="i.type=='sell'?'green':'red'">{{i.price}}</el-col>
+                <el-col :span='6' :class="i.amount>500?'red':''">{{i.amount}}</el-col>
               </el-row>
             </div>
           </div>
@@ -59,10 +59,10 @@
         <div v-bar style='height: 228px;' v-loading='depthLoading'>
           <div ref='sellBannerBox' class='bannerBox' >
             <div class='wrapper'>
-              <el-row v-for='(i, n) in depth.asks' :key='n'>
-                <el-col :span='8'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
-                <el-col :span='8' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
-                <el-col :span='8'>{{(i[0]*i[1]).toFixed(9)}}</el-col>
+              <el-row :gutter='20' v-for='(i, n) in depth.asks' :key='n'>
+                <el-col :span='7'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
+                <el-col :span='7' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
+                <el-col :span='10'>{{(i[0]*i[1]).toFixed(9)}}</el-col>
               </el-row>
             </div>
           </div>
@@ -72,10 +72,10 @@
         <div v-bar style='height: 228px;' v-loading='depthLoading'>
           <div class='bannerBox'>
             <div class="wrapper">
-              <el-row v-for='(i, n) in depth.bids' :key='n'>
-                <el-col :span='8'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
-                <el-col :span='8' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
-                <el-col :span='8'>{{(i[0]*i[1]).toFixed(9)}}</el-col>
+              <el-row :gutter='20' v-for='(i, n) in depth.bids' :key='n'>
+                <el-col :span='7'><span style='cursor: pointer;' @click='onPriceClick(i[0])'>{{i[0]}}</span></el-col>
+                <el-col :span='7' :class="i[1]>500?'red':''">{{i[1]}}</el-col>
+                <el-col :span='10'>{{(i[0]*i[1]).toFixed(9)}}</el-col>
               </el-row>
             </div>
           </div>
@@ -89,17 +89,17 @@
 
 <!------------------------------------打散下单---------------------------------->
 
-      <el-col :span='4' style='margin-top: 30px;'>
+      <el-col :span='4'>
         <h2>打散下单</h2>
         <el-form :model="scatterForm" :rules='scatterRules' ref="scatterForm" label-width="80px">
           <el-form-item label="中心价格" prop='price'>
-            <el-input type='number' v-model.number="scatterForm.price" @focus="focusedParam='price'"></el-input>
+            <el-input type='number' v-model.number="scatterForm.price" @focus="focusedParam='price',focusedForm='scatterForm'"></el-input>
           </el-form-item>
           <el-form-item label="上限" prop='upperLimit'>
-            <el-input type='number' v-model.number="scatterForm.upperLimit" @focus="focusedParam='upperLimit'"></el-input>
+            <el-input type='number' v-model.number="scatterForm.upperLimit" @focus="focusedParam='upperLimit',focusedForm='scatterForm'"></el-input>
           </el-form-item>
           <el-form-item label="下限" prop='lowerLimit'>
-            <el-input type='number' v-model.number="scatterForm.lowerLimit" @focus="focusedParam='lowerLimit'"></el-input>
+            <el-input type='number' v-model.number="scatterForm.lowerLimit" @focus="focusedParam='lowerLimit',focusedForm='scatterForm'"></el-input>
           </el-form-item>
           <el-form-item label="打散数" prop='scatterNum'>
             <el-input type='number' v-model.number="scatterForm.scatterNum"></el-input>
@@ -108,14 +108,14 @@
             <el-input type='number' v-model.number="scatterForm.total"></el-input>
           </el-form-item>
           <div class='form-btn'>
-            <el-button class='medium-btn' :loading='buyBtnLoading' @click="onBuyClick">买</el-button>
-            <el-button class='medium-btn' :loading='sellBtnLoading' @click="onSellClick">卖</el-button>
+            <el-button class='medium-btn' :loading='buyBtnLoading' @click="onScatterBtnClick(1)">买</el-button>
+            <el-button class='medium-btn' :loading='sellBtnLoading' @click="onScatterBtnClick(0)">卖</el-button>
           </div>
         </el-form>
 
 <!------------------------------------填补流动性---------------------------------->
 
-        <h2 style="margin-top: 34px;">填补流动性</h2>
+        <h2>填补流动性</h2>
         <el-form :model="mobilityForm" :rules='mobilityRules' ref="mobilityForm" label-width="80px">
 
           <el-form-item label="档位" style='margin:0'>
@@ -152,8 +152,34 @@
 
 <!------------------------------------填补差价---------------------------------->
 
-      <el-col :span='8' style='margin-top: 30px;'>
-        <h2>填补差价</h2>
+      <el-col :span='8'>
+
+        <h2>辅助下单</h2>
+        <el-form inline :model='helpForm' :rules='helpRules' ref='helpForm' :show-message='false'>
+          <el-row>
+            <el-col :span='8'>
+              <el-form-item prop='price'>
+                <el-input @focus="focusedParam='price',focusedForm='helpForm'" type='number' placeholder='价格' v-model='helpForm.price'></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span='6'>
+              <el-form-item prop='num'>
+                <el-input type='number' placeholder='数量' v-model='helpForm.num'></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span='10'>
+              <el-form-item>
+                <el-button @click='randomAmount(n+1)' v-for='(i,n) in unitBtns' :key='n' size='mini'>{{i}}</el-button>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item>
+            <el-button class='medium-btn' @click='onHelpBtnClick(1)'>买</el-button>
+            <el-button class='medium-btn' @click='onHelpBtnClick(0)'>卖</el-button>
+          </el-form-item>
+        </el-form>
+
+        <h2 style="margin-top: 20px;">填补差价</h2>
         <el-row>
 
           <el-col :span='15'>
@@ -205,10 +231,11 @@
 
     <!----------------下单-------------------->
     <el-dialog center :title='orderDialogTitle' :visible.sync="orderDialogVisible" @close='isInDanger=false'>
-      <el-table border :data="orderData">
+      <el-table border :data="orderData" max-height='288'>
         <el-table-column label="类型">
           <template slot-scope='scope'>
-            {{scope.row.type == 'buy' ? '买' : '卖'}}
+            <span class='red' v-if="scope.row.type==='buy'">买</span>
+            <span class='green' v-else>卖</span>
           </template>
         </el-table-column>
         <el-table-column prop="price" label="价格"></el-table-column>
@@ -217,7 +244,7 @@
       <p v-if='isInDanger' class='red' style='margin-top: 10px;text-align: center;'>订单存在风险</p>
       <div slot="footer" v-if='orderData.length'>
         <el-button @click="orderDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="order" :loading='orderConfirmLoading' :disabled='isInDanger'>确定下单</el-button>
+        <el-button type="primary" @click="order" :loading='orderConfirmLoading'>确定下单</el-button>
       </div>
     </el-dialog>
 
@@ -226,7 +253,8 @@
       <el-table border :data="resultData">
         <el-table-column label="类型">
           <template slot-scope='scope'>
-            {{scope.row.type == 'buy' ? '买' : '卖'}}
+            <span class='red' v-if="scope.row.type==='buy'">买</span>
+            <span class='green' v-else>卖</span>
           </template>
         </el-table-column>
         <el-table-column prop="price" label="价格"></el-table-column>
@@ -260,8 +288,9 @@ export default {
       callback()
     }
     return {
+      restMoney: [], // 余额
 
-      platformId: '', // 筛选
+      platformId: '', // 平台
       areaId: '', // 交易区
       currencyId: '', // 币种
       platformList: [],
@@ -269,8 +298,6 @@ export default {
       currencyList: [],
       allAreas: {}, // 所有交易区缓存
       allCurrencys: {}, // 所有币名缓存
-
-      focusedParam: '', // 聚焦 的输入框model名
 
       history: [], // 历史记录
       depth: {}, // 深度
@@ -289,7 +316,6 @@ export default {
       resultDialogVisible: false, // 下单后>结果弹框
       resultData: [], // 下单后反馈数据
 
-      isScatterBuy: false, // 是否为打散下单买入状态
       buyBtnLoading: false, // 打散下单，买 Loading
       sellBtnLoading: false, // 打散下单，卖Loading
       isInDanger: false, // 打散下单是否有风险
@@ -336,6 +362,16 @@ export default {
       },
       mobilityBtnLoading: false, // 流动性下单loading
 
+      helpForm: { // 辅助下单------------
+        price: '',
+        num: ''
+      },
+      helpRules: {
+        price: [{required: true}],
+        num: [{required: true}]
+      },
+      unitBtns: ['百', '千', '万'],
+
       autoFillLoading: false, // 自动填充loading
       diffForm: {
         list: [
@@ -363,21 +399,44 @@ export default {
     }
   },
   methods: {
+    getUserInfo () {
+      this.$ajax({
+        url: '/account/user/info',
+        method: 'post',
+        done: ({data}) => {
+          console.log(data)
+          this.restMoney = data || []
+        },
+        fail: () => {
+          this.restMoney = []
+        }
+      })
+    },
     getPlatform () { // 获取平台
       this.$ajax({
         url: '/option/platform',
         done: ({data}) => {
           data = data || []
           this.platformList = data
-          this.platformId = data.length ? data[0].id : ''
+          if (this.xParams[0]) {
+            this.platformId = Number(this.xParams[0])
+          } else if (data.length) {
+            this.platformId = data[0].id
+          } else {
+            this.platformId = ''
+          }
           this.onPlatformChange()
         }
       })
     },
     onPlatformChange () { // 切换平台
+      this.historyLoading = true
+      this.depthLoading = true
       this.getArea()
     },
     onAreaChange () { // 切换交易区
+      this.historyLoading = true
+      this.depthLoading = true
       this.areaList.forEach(i => {
         if (i.id === this.areaId) {
           this.areaName = i.name
@@ -386,6 +445,11 @@ export default {
       this.getCurrency()
     },
     onCurrencyChange () { // 切换币名
+      console.log('币名改变')
+      this.getUserInfo() // 获取余额
+      this.historyLoading = true
+      this.depthLoading = true
+      this.isScrollInited = false
       this.currencyList.forEach(i => {
         if (i.id === this.currencyId) {
           this.currencyName = i.name
@@ -394,8 +458,6 @@ export default {
       var xParams = [this.platformId, this.areaName, this.currencyName].join(',')
       this.$store.commit('updateXparams', xParams)
       localStorage.setItem('xParams', xParams)
-      this.getHistory()
-      this.getDepth()
     },
     getArea () { // 获取交易区
       this.$ajax({
@@ -406,13 +468,32 @@ export default {
         done: ({data}) => {
           data = data || []
           this.areaList = data
-          this.areaId = data.length ? data[0].id : ''
-          if (data.length) {
+
+          if (!this.isAreaInited) { // 若未初始化
+            console.log('area初始化')
+
+            if (this.xParams[1]) { // 若交易区有值
+              data.forEach(i => {
+                if (i.name === this.xParams[1]) {
+                  this.areaId = i.id // 下拉状态改变
+                  this.areaName = this.xParams[1] // header传值改变
+                }
+              })
+            } else if (data.length) {
+              this.areaId = data[0].id
+            } else {
+              this.areaId = ''
+              this.areaName = ''
+            }
+
+            this.isAreaInited = true // 已初始化，下次不会进入
+          } else if (data.length) {
             this.areaId = data[0].id
           } else {
             this.areaId = ''
             this.areaName = ''
           }
+
           this.onAreaChange()
         }
       })
@@ -426,19 +507,43 @@ export default {
         done: ({data}) => {
           data = data || []
           this.currencyList = data
-          if (data.length) {
+
+          if (!this.isCurrencyInited) { // 若未初始化
+            if (this.xParams[2]) { // 若币名有值
+              data.forEach(i => {
+                if (i.name === this.xParams[2]) {
+                  this.currencyId = i.id // 下拉状态改变
+                  this.currencyName = this.xParams[2] // header传值改变
+                }
+              })
+            } else if (data.length) { // 无值时给默认
+              this.currencyId = data[0].id
+            } else {
+              this.currencyId = ''
+              this.currencyName = ''
+            }
+
+            this.isCurrencyInited = true // 已初始化，下次不会进入
+          } else if (data.length) { // 若已初始化
             this.currencyId = data[0].id
           } else {
             this.currencyId = ''
             this.currencyName = ''
           }
+
           this.onCurrencyChange()
         }
       })
     },
+    randomAmount (n) {
+      var base = 10 * Math.pow(10, n)
+      console.log(base, base * 9)
+      this.helpForm.num = base + parseInt(Math.random() * base * 9)
+    },
     onPriceClick (price) {
       if (this.focusedParam) {
-        this.scatterForm[this.focusedParam] = price
+        console.log(this.focusedForm)
+        this[this.focusedForm][this.focusedParam] = price
       }
     },
     onDiffPriceClick () {
@@ -450,24 +555,43 @@ export default {
         url: '/market/trades',
         done: ({data}) => {
           data = data || []
-          data.forEach(i => { i.time = this.moment(i.date_ms).format('YY.MM.DD HH:mm:ss') })
+          data.forEach(i => { i.time = this.moment(i.date * 1000).format('YY.MM.DD HH:mm:ss') })
           this.history = data.reverse()
-        },
-        always: () => {
-          this.historyLoading = false
+
           !this.destroyed && setTimeout(() => {
             this.getHistory()
           }, 1000)
+        },
+        fail: () => {
+          this.history = []
+          !this.destroyed && setTimeout(() => {
+            this.getHistory()
+          }, 5000)
+        },
+        always: () => {
+          this.historyLoading = false
         }
       })
     },
     sellScrollInit () {
-      if (!this.isScrollInit) { // 卖 展板dom生成后，设置其滚动条
+      if (!this.isScrollInited) { // 卖 展板dom生成后，设置其滚动条
         setTimeout(() => {
           this.$refs.sellBannerBox.scrollTop = this.$refs.sellBannerBox.scrollHeight // 卖 > 拉倒最底
         }, 0)
       }
-      this.isScrollInit = true // 滚动条只设置一次
+      this.isScrollInited = true // 滚动条只设置一次
+    },
+    maxLengthCalculate () {
+      if (!this.isMaxLengthInited) {
+        var decimal
+        var lengthArr = this.depth.asks.map(i => {
+          decimal = Number(i[0]).toString().split('.')[1]
+          return decimal ? decimal.length : 0
+        })
+        lengthArr = lengthArr.sort()
+        this.maxLength = lengthArr[lengthArr.length - 1]
+        this.isMaxLengthInited = true
+      }
     },
     getDepth () {
       this.$ajax({
@@ -477,23 +601,36 @@ export default {
           this.depth = data
           data.asks = data.asks || [] // 卖
           data.bids = data.bids || [] // 买
-          this.soldAmount = 0 // 或拉取多次
-          this.boughtAmount = 0
           data.asks.forEach(i => { this.soldAmount += Number(i[1]) })
           data.bids.forEach(i => { this.boughtAmount += Number(i[1]) })
           this.diffPrice = (data.asks[data.asks.length - 1][0] - data.bids[0][0]).toFixed(8)
 
+          this.maxLengthCalculate()
           this.sellScrollInit()
+
+          !this.destroyed && setTimeout(() => { // 成功后延迟一秒再次执行
+            this.getDepth()
+          }, 1000)
+        },
+        fail: () => {
+          this.depth = {} // 买卖清空
+          this.boughtAmount = 0 // 买总量清空
+          this.soldAmount = 0 // 卖总量清空
+          this.diffPrice = '' // 价差
+
+          !this.destroyed && setTimeout(() => { // 失败后延迟5秒再次执行
+            this.getDepth()
+          }, 5000)
         },
         always: () => {
           this.depthLoading = false
-          !this.destroyed && setTimeout(() => {
-            this.getDepth()
-          }, 1000)
         }
       })
     },
     scatterCalculate () {
+      this.scatterForm.price = Number(this.scatterForm.price)
+      this.scatterForm.upperLimit = Number(this.scatterForm.upperLimit)
+      this.scatterForm.lowerLimit = Number(this.scatterForm.lowerLimit)
       if (this.scatterForm.upperLimit < this.scatterForm.lowerLimit) {
         this.$message.error('上限不能小于下限')
         return
@@ -534,23 +671,23 @@ export default {
         }
       })
     },
-    onBuyClick () {
+    onScatterBtnClick (isBuy) {
       this.$refs.scatterForm.validate(valid => {
         if (valid) {
-          this.isScatterBuy = true
-          this.orderDialogTitle = '买入'
+          this.isScatterBuy = isBuy
+          this.orderDialogTitle = isBuy ? '买入' : '卖出'
           this.orderType = 1
           this.scatterCalculate()
         }
       })
     },
-    onSellClick () {
-      this.$refs.scatterForm.validate(valid => {
+    onHelpBtnClick (isBuy) {
+      this.$refs.helpForm.validate(valid => {
         if (valid) {
-          this.isScatterBuy = false
-          this.orderDialogTitle = '卖出'
-          this.orderType = 1
-          this.scatterCalculate()
+          this.orderDialogTitle = isBuy ? '买入' : '卖出'
+          this.orderType = 0
+          this.orderDialogVisible = true
+          this.orderData = [Object.assign(this.helpForm, {type: isBuy ? 'buy' : 'sell'})]
         }
       })
     },
@@ -561,7 +698,8 @@ export default {
         method: 'post',
         params: {orderType: this.orderType},
         data: {
-          orders: this.orderData
+          orders: this.orderData,
+          max_num: this.maxLength
         },
         done: ({data}) => {
           this.orderDialogVisible = false
@@ -606,25 +744,24 @@ export default {
         }
       })
     },
-    sort (arr) { // 从小到大
-      for (var i = 0; i < arr.length - 1; i++) {
-        for (var j = 0; j < arr.length - 1 - i; j++) {
-          if (arr[j].price > arr[j + 1].price) {
-            var temp = arr[j]
-            arr[j] = arr[j + 1]
-            arr[j + 1] = temp
-          }
-        }
-      }
-      return arr
-    },
-    solveAutoFillData (data = []) {
-      var sell = data.slice(0, 4)
-      var buy = data.slice(4)
-      return this.sort(sell).concat(this.sort(buy))
-    },
+    //  sort (arr) { // 从大到小
+    //    for (var i = 0; i < arr.length - 1; i++) {
+    //      for (var j = 0; j < arr.length - 1 - i; j++) {
+    //        if (arr[j].price < arr[j + 1].price) {
+    //          var temp = arr[j]
+    //          arr[j] = arr[j + 1]
+    //          arr[j + 1] = temp
+    //        }
+    //      }
+    //    }
+    //    return arr
+    //  },
+    //  solveAutoFillData (data = []) {
+    //    var sell = data.slice(0, 4)
+    //    var buy = data.slice(4)
+    //    return this.sort(sell).concat(this.sort(buy))
+    //  },
     autoFill () {
-      console.log(this.diffForm2)
       this.$refs.diffForm2.validate(valid => {
         if (valid) {
           this.autoFillLoading = true
@@ -636,7 +773,7 @@ export default {
               amount: this.diffForm2.total
             },
             done: ({data}) => {
-              this.diffForm.list = this.solveAutoFillData(data)
+              this.diffForm.list = data
             },
             always: () => {
               this.autoFillLoading = false
@@ -661,8 +798,9 @@ export default {
   },
   mounted () {
     this.getPlatform()
-    //  this.getHistory()
-    //  this.getDepth()
+    this.getHistory()
+    this.getDepth()
+    this.xParams = this.$store.state.xParams ? this.$store.state.xParams.split(',') : []
   },
   beforeDestroy () {
     this.destroyed = true // 防止异步请求触触发多个延时器，无法控制
@@ -684,7 +822,7 @@ export default {
       .wrapper{margin-right:20px;}
     }
 
-    h2{font-size: 20px;line-height: 20px;height: 30px;}
+    h2{font-size: 20px;line-height: 20px;height: 30px;margin-top: 30px;}
 
     .title{line-height: 30px;}
 

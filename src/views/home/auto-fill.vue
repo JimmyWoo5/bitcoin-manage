@@ -49,10 +49,10 @@
       </el-col>
 
       <el-col :span='14' :offset='2'>
-        <el-table border :data="tableData">
-          <el-table-column label="类型" min-width='66' v-loading='tableLoading'>
+        <el-table border :data="tableData" v-loading='tableLoading'>
+          <el-table-column label="类型" min-width='66'>
             <template slot-scope='scope'>
-              <span class='red' v-if="scope.row.type==='sell'">买</span>
+              <span class='red' v-if="scope.row.type==='buy'">买</span>
               <span class='green' v-else>卖</span>
             </template>
           </el-table-column>

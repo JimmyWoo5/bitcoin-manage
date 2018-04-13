@@ -8,7 +8,7 @@
         <el-table border :data="undone" v-loading='undoneLoading'>
           <el-table-column label="类型" min-width='66'>
             <template slot-scope='scope'>
-              <span class='red' v-if="scope.row.type==='sell'">买</span>
+              <span class='red' v-if="scope.row.type==='buy'">买</span>
               <span class='green' v-else>卖</span>
             </template>
           </el-table-column>
@@ -49,7 +49,7 @@
         <el-table border :data="done" v-loading='doneLoading'>
           <el-table-column label="类型" min-width='66'>
             <template slot-scope='scope'>
-              <span class='red' v-if="scope.row.type==='sell'">买</span>
+              <span class='red' v-if="scope.row.type==='buy'">买</span>
               <span class='green' v-else>卖</span>
             </template>
           </el-table-column>

@@ -24,8 +24,10 @@ var $ajax = (opts) => {
     } else if (data.status === 10001) {
       ELEMENT.Message.error('登录过期')
       router.push('/login')
-    } else {
+    } else if (data.status !== 10002) {
       ELEMENT.Message.error(data.message)
+      opts.fail(data)
+    } else {
       opts.fail(data)
     }
   }).catch(({response}) => {
@@ -39,7 +41,6 @@ var $ajax = (opts) => {
 export default {
   name: 'ajax',
   install (Vue) {
-    Vue.ajax = $ajax
     Vue.prototype.$ajax = $ajax
   }
 }
